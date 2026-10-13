@@ -1,0 +1,67 @@
+services:
+  ollama:
+    image: ollama/ollama:0.32.1
+    volumes:
+      - ollama-data:/root/.ollama
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 5s
+      timeout: 4s
+      retries: 24
+    restart: unless-stopped
+
+  model-init:
+    image: ollama/ollama:0.32.1
+    environment:
+      OLLAMA_HOST: http://ollama:11434
+    depends_on:
+      ollama:
+        condition: service_healthy
+    command: ["pull", "qwen3:1.7b-q4_K_M"]
+    restart: "no"
+
+  backend:
+    build:
+      context: .
+      dockerfile: docker/backend.Dockerfile
+    env_file:
+      - ${COMPOSE_ENV_FILE_PATH:-.env}
+    environment:
+      DEMO_RUNTIME_DIR: /data
+      DEMO_PROVIDER_MODE: ${DEMO_PROVIDER_MODE:-demo}
+      DEMO_OPENAI_BASE_URL: ${DEMO_OPENAI_BASE_URL:-}
+      DEMO_OPENAI_MODEL: ${DEMO_OPENAI_MODEL:-}
+      DEMO_OPENAI_API_KEY: ${DEMO_OPENAI_API_KEY:-}
+      DEMO_PROVIDER_TIMEOUT_SECONDS: ${DEMO_PROVIDER_TIMEOUT_SECONDS:-30}
+      DEMO_OLLAMA_BASE_URL: http://ollama:11434
+      DEMO_OLLAMA_MODEL: qwen3:1.7b-q4_K_M
+      DEMO_OLLAMA_TIMEOUT_SECONDS: ${DEMO_OLLAMA_TIMEOUT_SECONDS:-5}
+      DEMO_MAX_UPLOAD_BYTES: ${DEMO_MAX_UPLOAD_BYTES:-20971520}
+      DEMO_AUTH_REQUIRED: ${DEMO_AUTH_REQUIRED:-true}
+      DEMO_AUTH_USERNAME: ${DEMO_AUTH_USERNAME:?set DEMO_AUTH_USERNAME in .env}
+      DEMO_AUTH_PASSWORD_HASH: ${DEMO_AUTH_PASSWORD_HASH:?set DEMO_AUTH_PASSWORD_HASH in .env}
+      DEMO_SESSION_SECRET: ${DEMO_SESSION_SECRET:?set DEMO_SESSION_SECRET in .env}
+    volumes:
+      - backend-data:/data
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health', timeout=3)"]
+      interval: 5s
+      timeout: 4s
+      retries: 12
+      start_period: 5s
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/frontend.Dockerfile
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "8080:80"
+    restart: unless-stopped
+
+volumes:
+  backend-data:
+  ollama-data:

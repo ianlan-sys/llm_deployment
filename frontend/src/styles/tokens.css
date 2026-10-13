@@ -1,0 +1,17 @@
+:root {
+  --nav-900: #0d3158;
+  --nav-700: #174f7d;
+  --primary-600: #1e6fa8;
+  --success-600: #1d8b69;
+  --warning-600: #d98b28;
+  --danger-600: #b8433a;
+  --surface: #ffffff;
+  --canvas: #f4f7fa;
+  --text-900: #162536;
+  --text-700: #41566b;
+  --border: #d7e0e9;
+  --sidebar-width: 252px;
+  font-family: "Microsoft YaHei", "Noto Sans CJK SC", system-ui, sans-serif;
+  color: var(--text-900);
+  background: var(--canvas);
+}

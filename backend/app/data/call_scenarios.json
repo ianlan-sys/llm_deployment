@@ -1,0 +1,6 @@
+[
+  {"id": "fault-report", "name": "核心业务访问缓慢报修", "description": "星港市公共服务演示中心报告核心业务页面响应变慢。", "category": "故障报修", "priority": "high", "contact_address": "192.0.2.10", "status": "active"},
+  {"id": "service-request", "name": "业务办理进度咨询", "description": "北辰区政务演示大厅咨询账号权限申请的办理流程和进度。", "category": "业务咨询", "priority": "normal", "contact_address": "198.51.100.20", "status": "active"},
+  {"id": "maintenance-window", "name": "维护通知延迟投诉", "description": "海岳数据演示节点投诉维护通知送达不及时影响业务安排。", "category": "服务投诉", "priority": "high", "contact_address": "203.0.113.30", "status": "active"},
+  {"id": "security-alert", "name": "处理结果回访", "description": "青岚测试园区回访已关闭异常登录告警的核查与恢复结果。", "category": "结果回访", "priority": "normal", "contact_address": "192.0.2.40", "status": "active"}
+]

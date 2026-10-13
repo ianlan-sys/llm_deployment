@@ -1,0 +1,16 @@
+.superpowers/
+.worktrees/
+tmp/
+data/runtime/
+data/e2e-runtime/
+.env
+.venv/
+*.egg-info/
+backend/build/
+__pycache__/
+.pytest_cache/
+frontend/node_modules/
+frontend/dist/
+frontend/playwright-report/
+frontend/test-results/
+frontend/blob-report/

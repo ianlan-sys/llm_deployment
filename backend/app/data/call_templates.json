@@ -1,0 +1,14 @@
+[
+  {"id": "fault-ack", "scenario_id": "fault-report", "title": "确认故障现象", "content": "您好，已记录核心业务访问缓慢情况，请确认开始时间和受影响页面。", "tags": ["故障", "确认"], "status": "approved"},
+  {"id": "fault-scope", "scenario_id": "fault-report", "title": "确认影响范围", "content": "请确认受影响用户范围、网络区域及是否存在完全不可用的页面。", "tags": ["故障", "范围"], "status": "approved"},
+  {"id": "fault-next", "scenario_id": "fault-report", "title": "告知处理进展", "content": "工单已升级处理，预计将在演示服务级别时限内反馈下一次进展。", "tags": ["故障", "进展"], "status": "approved"},
+  {"id": "request-ack", "scenario_id": "service-request", "title": "确认咨询事项", "content": "您好，已记录您咨询的业务事项，请确认申请编号和办理阶段。", "tags": ["咨询", "确认"], "status": "approved"},
+  {"id": "request-evidence", "scenario_id": "service-request", "title": "说明办理流程", "content": "该业务需按演示流程完成材料核验与审批，可在审批后查询结果。", "tags": ["咨询", "流程"], "status": "approved"},
+  {"id": "request-close", "scenario_id": "service-request", "title": "告知查询结果", "content": "当前申请已进入办理环节，如状态变更将通过预留渠道通知。", "tags": ["咨询", "进度"], "status": "approved"},
+  {"id": "maintenance-ack", "scenario_id": "maintenance-window", "title": "确认投诉事项", "content": "很抱歉维护通知不及时给您带来影响，已登记本次服务投诉。", "tags": ["投诉", "确认"], "status": "approved"},
+  {"id": "maintenance-impact", "scenario_id": "maintenance-window", "title": "说明核查安排", "content": "我们将核查通知发布与送达记录，并优先确认受影响范围。", "tags": ["投诉", "核查"], "status": "approved"},
+  {"id": "maintenance-next", "scenario_id": "maintenance-window", "title": "承诺反馈时限", "content": "我们会在演示服务时限内反馈核查结果和改进措施。", "tags": ["投诉", "反馈"], "status": "approved"},
+  {"id": "security-ack", "scenario_id": "security-alert", "title": "确认回访对象", "content": "您好，本次回访用于确认异常登录告警的处理结果。", "tags": ["回访", "确认"], "status": "approved"},
+  {"id": "security-contain", "scenario_id": "security-alert", "title": "核对恢复结果", "content": "请确认可疑会话已退出、凭据已重置，且目前可正常登录。", "tags": ["回访", "结果"], "status": "approved"},
+  {"id": "security-next", "scenario_id": "security-alert", "title": "说明后续跟进", "content": "若后续再次出现告警，请引用原工单联系值守人员继续跟进。", "tags": ["回访", "跟进"], "status": "approved"}
+]

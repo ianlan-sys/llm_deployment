@@ -1,0 +1,69 @@
+# 离线安装包专用：只使用本地已导入的镜像，不构建、不联网拉取。
+# 模型服务只接入内部网络（internal），容器无任何对外出口；只有前端端口对宿主机开放。
+name: llmdemo
+
+services:
+  ollama:
+    image: llmdemo/ollama-cpu:0.32.1
+    pull_policy: never
+    networks:
+      - model-internal
+    volumes:
+      - ollama-data:/root/.ollama
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 5s
+      timeout: 4s
+      retries: 24
+    restart: unless-stopped
+
+  backend:
+    image: llmdemo/backend:1.0.0
+    pull_policy: never
+    env_file:
+      - .env
+    environment:
+      DEMO_RUNTIME_DIR: /data
+      DEMO_PROVIDER_MODE: ${DEMO_PROVIDER_MODE:-demo}
+      DEMO_OPENAI_BASE_URL: ${DEMO_OPENAI_BASE_URL:-}
+      DEMO_OPENAI_MODEL: ${DEMO_OPENAI_MODEL:-}
+      DEMO_OPENAI_API_KEY: ${DEMO_OPENAI_API_KEY:-}
+      DEMO_PROVIDER_TIMEOUT_SECONDS: ${DEMO_PROVIDER_TIMEOUT_SECONDS:-30}
+      DEMO_OLLAMA_BASE_URL: http://ollama:11434
+      DEMO_OLLAMA_MODEL: qwen3:1.7b-q4_K_M
+      DEMO_OLLAMA_TIMEOUT_SECONDS: ${DEMO_OLLAMA_TIMEOUT_SECONDS:-5}
+      DEMO_MAX_UPLOAD_BYTES: ${DEMO_MAX_UPLOAD_BYTES:-20971520}
+      DEMO_AUTH_REQUIRED: ${DEMO_AUTH_REQUIRED:-true}
+      DEMO_AUTH_USERNAME: ${DEMO_AUTH_USERNAME:?set DEMO_AUTH_USERNAME in .env}
+      DEMO_AUTH_PASSWORD_HASH: ${DEMO_AUTH_PASSWORD_HASH:?set DEMO_AUTH_PASSWORD_HASH in .env}
+      DEMO_SESSION_SECRET: ${DEMO_SESSION_SECRET:?set DEMO_SESSION_SECRET in .env}
+    networks:
+      - default
+      - model-internal
+    volumes:
+      - backend-data:/data
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health', timeout=3)"]
+      interval: 5s
+      timeout: 4s
+      retries: 12
+      start_period: 5s
+    restart: unless-stopped
+
+  frontend:
+    image: llmdemo/frontend:1.0.0
+    pull_policy: never
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "${LLMDEMO_BIND_ADDR:-0.0.0.0}:${LLMDEMO_HTTP_PORT:-8080}:80"
+    restart: unless-stopped
+
+networks:
+  model-internal:
+    internal: true
+
+volumes:
+  backend-data:
+  ollama-data:

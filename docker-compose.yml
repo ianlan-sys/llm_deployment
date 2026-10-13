@@ -1,6 +1,9 @@
 services:
   ollama:
     image: ollama/ollama:0.32.1
+    environment:
+      # 模型常驻内存，避免空闲 5 分钟后卸载导致下一个问题多等约 13 秒
+      OLLAMA_KEEP_ALIVE: "-1"
     volumes:
       - ollama-data:/root/.ollama
     healthcheck:

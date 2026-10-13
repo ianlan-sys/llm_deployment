@@ -71,9 +71,14 @@ packaging/guochan/build-package.sh arm64
 - 管理脚本的 Compose 项目名固定为 `llmdemo`（见 `package-template/scripts/lib.sh`）。在已经运行着同名项目的机器上测试时，先改掉测试副本里的项目名，避免冲突。
 - 在 x86 构建机上测试 arm64 包需要先注册 QEMU：`docker run --privileged --rm tonistiigi/binfmt --install arm64`，测完用 `--uninstall qemu-aarch64` 移除。模拟环境下推理速度约 0.3 tokens/s，只能验证功能，不能代表真实性能。
 
-## 当前状态（2026-10-02）
+## 实机测试
+
+拿到麒麟演示设备后，按 [`DEVICE-TEST.md`](DEVICE-TEST.md) 逐步执行并带回结果。安装包自带两个辅助脚本：`check.sh`（只读的环境体检，结果存为文本文件）和 `bench.sh`（本地模型测速）。
+
+## 当前状态（2026-10-13）
 
 - amd64、arm64 两个包均已构建，校验和通过。
+- 1.0.1 新增 `check.sh`、`bench.sh` 和安装时的环境体检；这部分只在开发机上用桩命令验证过，未在麒麟上运行。
 - arm64 包已在 QEMU 模拟下验证：服务健康、登录、口令重置、模型推理均正常。
 - **尚未在真实的飞腾 / 鲲鹏设备上运行过。** 目前以 QEMU 模拟验证为准（2026-10-13 确认）；拿到演示设备后需要完整安装一次，并在重启后做一次全流程彩排。
 - 目标操作系统已确定为麒麟（2026-10-13 确认）：演示一体机用银河麒麟桌面版，客户服务器用银河麒麟服务器版。

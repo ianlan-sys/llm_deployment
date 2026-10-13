@@ -46,6 +46,11 @@ esac
   die "本安装包为 ${PKG_ARCH}，本机为 ${HOST_ARCH}；请改用 local-llm-demo-offline-${HOST_ARCH} 安装包"
 log "系统：$(. /etc/os-release 2>/dev/null && echo "${PRETTY_NAME:-未知}")，架构 ${HOST_ARCH}"
 
+# 环境体检（只提示，不中断安装；也可单独运行 ./check.sh）
+source scripts/preflight.sh
+log "环境体检："
+preflight_report "${PORT:-8080}" || warn "体检有需要注意的项目（见上方 [ 注意 ] 行），安装继续"
+
 # 2. 完整性校验
 log "校验安装包完整性（SHA-256）……"
 sha256sum --quiet -c SHA256SUMS || die "文件校验失败，安装包可能损坏或被篡改"

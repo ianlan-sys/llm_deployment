@@ -26,7 +26,7 @@ ln "${B}/common/ollama-models-qwen3-1.7b.tar" "${OUT}/models/"
 cp "${B}/downloads/docker-27.5.1-${BINARCH}.tgz" "${OUT}/bin/"
 install -m 755 "${B}/downloads/docker-compose-linux-${BINARCH}" "${OUT}/bin/docker-compose"
 echo "${ARCH}" > "${OUT}/ARCH"
-printf 'local-llm-demo offline 1.0.0\nsource commit %s\nbuilt %s\n' \
+printf 'local-llm-demo offline 1.0.1\nsource commit %s\nbuilt %s\n' \
   "$(cat "${SRC}/DEPLOYED_COMMIT")" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" > "${OUT}/VERSION"
 
 for spec in backend:1.0.0 frontend:1.0.0 ollama-cpu:0.32.1; do

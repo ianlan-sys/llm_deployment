@@ -17,6 +17,16 @@
 
 **硬件要求**：4 核 CPU、8 GB 内存、20 GB 可用磁盘。演示模式不需要 GPU。
 
+## 安装前体检（建议）
+
+解压后先运行一次体检，它只读取系统信息，不做任何修改：
+
+```bash
+sudo ./check.sh
+```
+
+它会列出系统版本、CPU、内存、磁盘、Docker、麒麟安全机制（KySec）、端口占用等情况，需要处理的项目标为 `[ 注意 ]`。结果同时保存为当前目录下的 `llmdemo-check-<时间>.txt`（不含口令和密钥），现场遇到问题时把这个文件带回来即可。
+
 ## 安装（3 步）
 
 ```bash
@@ -66,6 +76,8 @@ sudo ./install.sh --install-docker --desktop --bind 127.0.0.1
 | `sudo ./start.sh` | 启动 |
 | `sudo ./stop.sh` | 停止（数据保留） |
 | `sudo ./status.sh` | 查看状态和日志 |
+| `sudo ./check.sh` | 环境体检（安装前后均可运行，只读） |
+| `sudo ./bench.sh` | 本地模型测速，给出是否适合现场实时演示的结论 |
 | `sudo ./reset-password.sh` | 重新生成登录口令 |
 | `sudo ./setup-desktop.sh` | 安装 / 移除（`--remove`）桌面图标与自动打开 |
 | `sudo ./uninstall.sh` | 卸载服务（数据保留） |
@@ -78,6 +90,8 @@ sudo ./install.sh --install-docker --desktop --bind 127.0.0.1
 1. **坐席辅助**：选择预置来电场景，生成、采纳话术，再生成工单摘要。
 2. **运维知识库**：询问“核心交换机 VLAN 如何划分？”，展开“来源 1”查看原文。此功能默认使用本机 qwen3:1.7b 模型实时推理（CPU 上首次回答约需 10–30 秒）。
 3. **文档审核**：上传 `samples/technical-proposal.txt`，文件类型选“技术方案”，等待完成后查看风险项或导出 CSV。
+
+**演示前先测速**：运行 `sudo ./bench.sh`，它让本机模型回答一个固定问题 3 次，输出生成速度（token/秒）和建议。速度低于 3 token/秒时不要现场用本地模型，改用 Mock 模式。
 
 各业务可在“运行与设置”页切换 Mock（离线、秒级、结果固定）或本地模型模式。**正式演示前建议完整演练一遍**；演示机性能较弱时，把知识库也切到 Mock 模式可获得最稳定的效果。
 
@@ -99,6 +113,15 @@ DEMO_OPENAI_API_KEY=<密钥，无则留空>
 **一体机登录后没有自动打开页面**
 - 等 3 分钟（开机后 Docker 启动服务需要时间）；仍未打开就双击桌面图标，或在终端运行 `/usr/local/share/llmdemo/open-demo.sh` 查看提示。
 - 桌面图标显示为文本文件或“不受信任”：右键图标选“允许运行”/“信任”。
+
+**运行脚本提示“权限不够”“被阻止”，或 Docker 启动失败（麒麟）**
+- 麒麟的安全机制 KySec 开启“执行控制”时，会拦截未经认证的脚本和程序。先运行 `sudo getstatus` 查看状态。
+- 处理方法：打开“安全中心 → 应用控制与保护”，把“应用程序执行控制”改为“警告”或“关闭”；或在终端执行 `sudo setstatus softmode` 切到宽松模式。安装并验证完成后可用 `sudo setstatus enable` 恢复。
+- 涉密环境改动安全策略前，请先取得安全管理员同意。
+
+**容器启动后立即退出，或日志里有 Permission denied**
+- 运行 `getenforce`。如果输出 `Enforcing`，先执行 `sudo setenforce 0` 再运行 `sudo ./start.sh` 验证是否为 SELinux 拦截（重启后恢复原状态）。
+- 运行 `sudo ./check.sh` 查看“内存页大小”一项。显示 64K 时属于本安装包尚未实测的内核配置，请把 `./status.sh` 的输出和体检文件带回来。
 
 **浏览器打不开页面**
 - 本机先测：`curl http://127.0.0.1:8080/api/health`。
@@ -127,6 +150,7 @@ DEMO_OPENAI_API_KEY=<密钥，无则留空>
 
 ```
 install.sh  start.sh  stop.sh  status.sh  reset-password.sh  uninstall.sh  setup-desktop.sh
+check.sh    bench.sh
 docker-compose.yml   .env.example   ARCH   VERSION   SHA256SUMS
 images/     容器镜像（后端、前端、CPU 版 Ollama）
 models/     演示模型 qwen3:1.7b
